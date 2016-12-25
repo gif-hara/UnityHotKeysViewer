@@ -19,7 +19,7 @@ namespace HK.Framework.Editor.HotKeyViewer
 
 		private Vector2 scrollPosition;
 
-		[MenuItem("Window/HotKeys Viewer")]
+		[MenuItem("Window/Unity HotKeys")]
 		private static void Open()
 		{
 			EditorWindow.GetWindow<HotKeysViewer>(true, "Unity HotKeys");
