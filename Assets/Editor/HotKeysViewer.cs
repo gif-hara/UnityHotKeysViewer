@@ -27,9 +27,15 @@ namespace HK.Framework.Editor.HotKeyViewer
 
 		void OnGUI()
 		{
-			if(this.table == null)
+			if(this.www == null && this.table == null)
+			{
+				EditorGUILayout.LabelField("Push Acquire data Button");
+				GUILayout.FlexibleSpace();
+			}
+			else if(this.table == null)
 			{
 				EditorGUILayout.LabelField("Acquiring data...");
+				GUILayout.FlexibleSpace();
 			}
 			else
 			{
@@ -41,7 +47,7 @@ namespace HK.Framework.Editor.HotKeyViewer
 					foreach(var s in t.Elements)
 					{
 						EditorGUILayout.BeginHorizontal(GUI.skin.box);
-						EditorGUILayout.LabelField(s.HotKey);
+						EditorGUILayout.LabelField(s.HotKey, GUILayout.Width(200));
 						EditorGUILayout.LabelField(s.Command);
 						EditorGUILayout.EndHorizontal();
 					}
