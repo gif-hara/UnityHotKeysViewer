@@ -25,6 +25,11 @@ namespace HK.Framework.Editor.HotKeyViewer
 			EditorWindow.GetWindow<HotKeysViewer>(true, "Unity HotKeys");
 		}
 
+		void OnEnable()
+		{
+			this.AcquireWWW(this.DefaultCulture);
+		}
+
 		void OnGUI()
 		{
 			if(this.www == null && this.table == null)
@@ -153,6 +158,19 @@ namespace HK.Framework.Editor.HotKeyViewer
 
 			return elementText.Substring(startIndex, endIndex - startIndex);
 		}
+
+		private string DefaultCulture
+		{
+			get
+			{
+				return Application.systemLanguage == SystemLanguage.Japanese
+				? "ja"
+				: Application.systemLanguage == SystemLanguage.Korean
+				? "kr"
+				: "en";
+			}
+		}
+
 
 		private class Table
 		{
