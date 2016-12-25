@@ -15,7 +15,7 @@ namespace HK.Framework.Editor.HotKeyViewer
 	{
 		private WWW www;
 
-		private List<Table> _table;
+		private List<Table> table;
 
 		private Vector2 scrollPosition;
 
@@ -27,7 +27,7 @@ namespace HK.Framework.Editor.HotKeyViewer
 
 		void OnEnable()
 		{
-			if(this._table == null)
+			if(this.table == null)
 			{
 				this.AcquireWWW();
 			}
@@ -37,18 +37,18 @@ namespace HK.Framework.Editor.HotKeyViewer
 		{
 			if(GUILayout.Button("WWW"))
 			{
-				this._table = null;
+				this.table = null;
 				this.AcquireWWW();
 			}
 
-			if(this._table == null)
+			if(this.table == null)
 			{
 				EditorGUILayout.LabelField("Acquiring data...");
 				return;
 			}
 
 			this.scrollPosition = EditorGUILayout.BeginScrollView(this.scrollPosition);
-			foreach(var t in this._table)
+			foreach(var t in this.table)
 			{
 				EditorGUILayout.BeginVertical(GUI.skin.box);
 				EditorGUILayout.LabelField(t.Header);
@@ -74,7 +74,7 @@ namespace HK.Framework.Editor.HotKeyViewer
 			if(this.www.isDone)
 			{
 				var parsedTable = this.Parse(www.text);
-				this._table = new List<Table>();
+				this.table = new List<Table>();
 				Table createTable = null;
 				parsedTable.ForEach(t =>
 				{
@@ -82,7 +82,7 @@ namespace HK.Framework.Editor.HotKeyViewer
 					{
 						if(createTable != null)
 						{
-							this._table.Add(createTable);
+							this.table.Add(createTable);
 						}
 						createTable = new Table(t[0]);
 					}
@@ -91,7 +91,7 @@ namespace HK.Framework.Editor.HotKeyViewer
 						createTable.Add(t[0], t[1]);
 					}
 				});
-				this._table.Add(createTable);
+				this.table.Add(createTable);
 
 				this.www = null;
 				this.Repaint();
