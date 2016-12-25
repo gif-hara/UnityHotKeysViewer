@@ -68,10 +68,6 @@ namespace HK.Framework.Editor.HotKeyViewer
 			{
 				this.AcquireWWW("kr");
 			}
-			if(GUILayout.Button("Russia"))
-			{
-				this.AcquireWWW("ru");
-			}
 			EditorGUILayout.EndHorizontal();
 
 		}
