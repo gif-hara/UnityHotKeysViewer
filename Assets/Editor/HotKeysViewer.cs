@@ -22,46 +22,58 @@ namespace HK.Framework.Editor.HotKeyViewer
 		[MenuItem("Window/HotKeys Viewer")]
 		private static void Open()
 		{
-			EditorWindow.GetWindow<HotKeysViewer>(true, "HotKeys Viewer");
-		}
-
-		void OnEnable()
-		{
-			if(this.table == null)
-			{
-				this.AcquireWWW();
-			}
+			EditorWindow.GetWindow<HotKeysViewer>(true, "Unity HotKeys");
 		}
 
 		void OnGUI()
 		{
-			if(GUILayout.Button("WWW"))
-			{
-				this.table = null;
-				this.AcquireWWW();
-			}
-
 			if(this.table == null)
 			{
 				EditorGUILayout.LabelField("Acquiring data...");
-				return;
+			}
+			else
+			{
+				this.scrollPosition = EditorGUILayout.BeginScrollView(this.scrollPosition);
+				foreach(var t in this.table)
+				{
+					EditorGUILayout.BeginVertical(GUI.skin.box);
+					EditorGUILayout.LabelField(t.Header, EditorStyles.boldLabel);
+					foreach(var s in t.Elements)
+					{
+						EditorGUILayout.BeginHorizontal(GUI.skin.box);
+						EditorGUILayout.LabelField(s.HotKey);
+						EditorGUILayout.LabelField(s.Command);
+						EditorGUILayout.EndHorizontal();
+					}
+					EditorGUILayout.EndVertical();
+				}
+				EditorGUILayout.EndScrollView();
 			}
 
-			this.scrollPosition = EditorGUILayout.BeginScrollView(this.scrollPosition);
-			foreach(var t in this.table)
+			EditorGUILayout.BeginHorizontal(GUI.skin.box);
+			EditorGUILayout.LabelField("Acquire data:", GUILayout.Width(75));
+			if(GUILayout.Button("English"))
 			{
-				EditorGUILayout.BeginVertical(GUI.skin.box);
-				EditorGUILayout.LabelField(t.Header, EditorStyles.boldLabel);
-				foreach(var s in t.Elements)
-				{
-					EditorGUILayout.BeginHorizontal(GUI.skin.box);
-					EditorGUILayout.LabelField(s.HotKey);
-					EditorGUILayout.LabelField(s.Command);
-					EditorGUILayout.EndHorizontal();
-				}
-				EditorGUILayout.EndVertical();
+				this.AcquireWWW("en");
 			}
-			EditorGUILayout.EndScrollView();
+			if(GUILayout.Button("日本語"))
+			{
+				this.AcquireWWW("ja");
+			}
+			if(GUILayout.Button("Espanol"))
+			{
+				this.AcquireWWW("es");
+			}
+			if(GUILayout.Button("한국어"))
+			{
+				this.AcquireWWW("kr");
+			}
+			if(GUILayout.Button("Russia"))
+			{
+				this.AcquireWWW("ru");
+			}
+			EditorGUILayout.EndHorizontal();
+
 		}
 
 		void OnInspectorUpdate()
@@ -98,9 +110,13 @@ namespace HK.Framework.Editor.HotKeyViewer
 			}
 		}
 
-		private void AcquireWWW()
+		private void AcquireWWW(string culture)
 		{
-			this.www = new WWW("https://docs.unity3d.com/ja/current/Manual/UnityHotkeys.html");			
+			this.table = null;
+			var url = culture == "en"
+				? "https://docs.unity3d.com/Manual/UnityHotkeys.html"
+				: string.Format("https://docs.unity3d.com/{0}/current/Manual/UnityHotkeys.html", culture);
+			this.www = new WWW(url);			
 		}
 
 		private List<List<string>> Parse(string text)
