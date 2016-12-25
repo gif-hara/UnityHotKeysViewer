@@ -51,7 +51,7 @@ namespace HK.Framework.Editor.HotKeyViewer
 			foreach(var t in this.table)
 			{
 				EditorGUILayout.BeginVertical(GUI.skin.box);
-				EditorGUILayout.LabelField(t.Header);
+				EditorGUILayout.LabelField(t.Header, EditorStyles.boldLabel);
 				foreach(var s in t.Elements)
 				{
 					EditorGUILayout.BeginHorizontal(GUI.skin.box);
@@ -162,8 +162,19 @@ namespace HK.Framework.Editor.HotKeyViewer
 
 			public TableElement(string hotKey, string command)
 			{
+				hotKey = hotKey.Replace("CTRL/CMD", this.PlatformKey);
 				this.HotKey = hotKey;
 				this.Command = command;
+			}
+
+			private string PlatformKey
+			{
+				get
+				{
+					return Application.platform == RuntimePlatform.OSXEditor
+					? "CMD"
+					: "CTRL";
+				}
 			}
 		}
 	}
