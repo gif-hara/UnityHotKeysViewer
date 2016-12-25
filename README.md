@@ -1,7 +1,5 @@
 # UnityHotKeysViewer
 
-![](https://raw.github.com/wiki/hiroki-kitahara/UnityHotKeysViewer/images.png)
-
 # これはなに？
 Unityのショートカットキーを一覧で見れるヤーツ
 
