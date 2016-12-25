@@ -15,19 +15,19 @@ namespace HK.Framework.Editor.HotKeyViewer
 	{
 		private WWW www;
 
-		private List<List<string>> table;
+		private List<Table> _table;
 
 		private Vector2 scrollPosition;
 
 		[MenuItem("Window/HotKeys Viewer")]
 		private static void Open()
 		{
-			EditorWindow.GetWindow<HotKeysViewer>("HotKeys Viewer");
+			EditorWindow.GetWindow<HotKeysViewer>(true, "HotKeys Viewer");
 		}
 
 		void OnEnable()
 		{
-			if(this.table == null)
+			if(this._table == null)
 			{
 				this.AcquireWWW();
 			}
@@ -37,18 +37,29 @@ namespace HK.Framework.Editor.HotKeyViewer
 		{
 			if(GUILayout.Button("WWW"))
 			{
+				this._table = null;
 				this.AcquireWWW();
 			}
 
-			this.scrollPosition = EditorGUILayout.BeginScrollView(this.scrollPosition);
-			foreach(var t in this.table)
+			if(this._table == null)
 			{
-				EditorGUILayout.BeginHorizontal(GUI.skin.box);
-				foreach(var s in t)
+				EditorGUILayout.LabelField("Acquiring data...");
+				return;
+			}
+
+			this.scrollPosition = EditorGUILayout.BeginScrollView(this.scrollPosition);
+			foreach(var t in this._table)
+			{
+				EditorGUILayout.BeginVertical(GUI.skin.box);
+				EditorGUILayout.LabelField(t.Header);
+				foreach(var s in t.Elements)
 				{
-					EditorGUILayout.LabelField(s);
+					EditorGUILayout.BeginHorizontal(GUI.skin.box);
+					EditorGUILayout.LabelField(s.HotKey);
+					EditorGUILayout.LabelField(s.Command);
+					EditorGUILayout.EndHorizontal();
 				}
-				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.EndVertical();
 			}
 			EditorGUILayout.EndScrollView();
 		}
@@ -62,8 +73,28 @@ namespace HK.Framework.Editor.HotKeyViewer
 
 			if(this.www.isDone)
 			{
-				this.table = this.Parse(www.text);
+				var parsedTable = this.Parse(www.text);
+				this._table = new List<Table>();
+				Table createTable = null;
+				parsedTable.ForEach(t =>
+				{
+					if(t.Count == 1)
+					{
+						if(createTable != null)
+						{
+							this._table.Add(createTable);
+						}
+						createTable = new Table(t[0]);
+					}
+					else
+					{
+						createTable.Add(t[0], t[1]);
+					}
+				});
+				this._table.Add(createTable);
+
 				this.www = null;
+				this.Repaint();
 			}
 		}
 
@@ -111,22 +142,27 @@ namespace HK.Framework.Editor.HotKeyViewer
 
 			public List<TableElement> Elements{ private set; get; }
 
-			public Table(string header, List<TableElement> elements)
+			public Table(string header)
 			{
 				this.Header = header;
-				this.Elements = elements;
+				this.Elements = new List<TableElement>();
+			}
+
+			public void Add(string hotKey, string command)
+			{
+				this.Elements.Add(new TableElement(hotKey, command));
 			}
 		}
 
 		private class TableElement
 		{
-			public string Keystroke{ private set; get; }
+			public string HotKey{ private set; get; }
 
 			public string Command{ private set; get; }
 
-			public TableElement(string keystroke, string command)
+			public TableElement(string hotKey, string command)
 			{
-				this.Keystroke = keystroke;
+				this.HotKey = hotKey;
 				this.Command = command;
 			}
 		}
